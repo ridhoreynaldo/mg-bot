@@ -1,0 +1,1 @@
+{"description":"Lab detektor bot untuk server sendiri (CommonJS — folder ini sengaja memutus type: module dari package.json repo induk mg-bot)","name":"bot-detector","private":true,"scripts":{"start":"node server.js","test":"node --test test/score.test.js"},"type":"commonjs"}
