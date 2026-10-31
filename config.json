@@ -1,0 +1,26 @@
+{
+  "url": "https://monstergalaxy.cc",
+  "viewport": { "width": 1280, "height": 800 },
+
+  "login": {
+    "userSelector": "",
+    "passSelector": "",
+    "submitSelector": ""
+  },
+
+  "target": "canvas, embed, object, iframe, #game",
+
+  "limits": {
+    "maxActionsPerHour": 240,
+    "maxSessionMinutes": 120,
+    "breakEveryMinutes": 45,
+    "breakMinutes": 10
+  },
+
+  "stopIf": {
+    "frameUrlContains": ["challenges.cloudflare.com", "recaptcha", "hcaptcha"],
+    "pageTextContains": ["banned", "suspended", "captcha", "verify you are human", "akun diblokir"]
+  },
+
+  "routineFile": "routine.json"
+}

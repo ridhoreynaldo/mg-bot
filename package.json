@@ -1,0 +1,14 @@
+{
+  "name": "monster-galaxy-bot",
+  "private": true,
+  "type": "module",
+  "description": "Bot farming satu akun beta tester monstergalaxy.cc (izin admin, tanpa penyamaran)",
+  "scripts": {
+    "setup": "playwright install chromium",
+    "record": "node --env-file-if-exists=.env src/record.mjs",
+    "start": "node --env-file-if-exists=.env src/bot.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}
