@@ -36,7 +36,25 @@ try {
     for (let i = 0; i < 4; i++) await page.click(i % 2 ? '#target2' : '#target1');
   });
 
-  console.log('\nSelesai. Refresh dashboard untuk melihat dua baris barunya: ' + BASE + '/dashboard');
+  // Skenario C — korelasi: SATU sesi mengirim sinyal mencurigakan BERULANG.
+  // Di sinilah Fase 2 terlihat: skor akhir naik dari kiriman ke kiriman
+  // (dasar -> akhir), karena riwayat likely_bot sesi yang sama menumpuk.
+  // Skenario A/B di atas masing-masing sesi baru + sekali kirim, jadi
+  // korelasinya memang 0 — itu sebabnya di dashboard dasar = akhir.
+  {
+    const page = await browser.newPage();
+    await page.goto(BASE, { waitUntil: 'load' });
+    await page.click('#target1');
+    await page.click('#target2');
+    console.log('\n=== C — kirim berulang dalam satu sesi (korelasi) ===');
+    for (let i = 1; i <= 3; i++) {
+      const r = await page.evaluate(() => window.__sendSignal());
+      console.log(`  kirim ${i}: dasar ${r.baseScore} -> akhir ${r.score}  (${r.verdict}, korelasi +${r.correlationPoints})`);
+    }
+    await page.close();
+  }
+
+  console.log('\nSelesai. Refresh dashboard untuk melihat baris barunya: ' + BASE + '/dashboard');
 } catch (e) {
   console.error('Gagal — pastikan server lab jalan di terminal lain: node server.js');
   console.error(String(e).split('\n')[0]);
