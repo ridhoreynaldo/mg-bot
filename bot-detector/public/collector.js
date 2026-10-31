@@ -37,6 +37,19 @@
     downAt = null; movedSinceLastClick = false;
   }, true);
 
+  // ID sesi acak per tab — dipakai server untuk korelasi antar kiriman.
+  // Bukan identitas pengguna: hilang saat tab ditutup (sessionStorage).
+  function sessionId() {
+    try {
+      let id = sessionStorage.getItem('bd-session');
+      if (!id) {
+        id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+        sessionStorage.setItem('bd-session', id);
+      }
+      return id;
+    } catch { return null; }
+  }
+
   function canvasOk() {
     try {
       const cv = document.createElement('canvas');
@@ -66,6 +79,7 @@
     const avgPressMs = behavior.pressDurations.length
       ? behavior.pressDurations.reduce((a, x) => a + x, 0) / behavior.pressDurations.length : null;
     const payload = {
+      sessionId: sessionId(),
       client: {
         webdriver: navigator.webdriver === true,
         plugins: navigator.plugins ? navigator.plugins.length : null,

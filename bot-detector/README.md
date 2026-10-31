@@ -11,7 +11,7 @@ kirim — tapi dibalik arahnya.
 node server.js
 # buka http://127.0.0.1:8787        → halaman uji
 # buka http://127.0.0.1:8787/dashboard → hasil semua sinyal
-node --test test/score.test.js     # 4 tes scoring
+npm test                           # 9 tes (scoring + korelasi)
 ```
 
 Tidak ada `npm install` — hanya Node.js standar.
@@ -65,6 +65,32 @@ lemah, dan setiap poin punya alasan tertulis yang tampil di dashboard.
 ke ClientHello di terminasi TLS (load balancer / sensor khusus). Lab ini
 memeriksa konsistensi header di lapisan aplikasi — jangan tulis "JA3
 checked" di laporanmu kalau yang diperiksa sebenarnya header.
+
+## Fase 2 — persisten + korelasi per sesi
+
+Dua hal berubah dari lab awal:
+
+1. **Persistensi.** Setiap event ditambahkan ke `data/events.jsonl`
+   (satu JSON per baris, folder `data/` tidak ikut ke git) dan dimuat
+   kembali saat server start — dashboard tidak kosong lagi setelah
+   restart. Ganti lokasi lewat env `DATA_FILE` bila perlu.
+2. **Korelasi per sesi/IP** (`lib/correlate.js`). Collector kini mengirim
+   `sessionId` acak per tab (sessionStorage, hilang saat tab ditutup,
+   bukan identitas pengguna). Skor akhir = skor dasar + poin korelasi
+   dari riwayat kunci yang sama dalam 10 menit:
+   - tiap sinyal `suspicious` sebelumnya: +6 (maks 24)
+   - tiap sinyal `likely_bot` sebelumnya: +10 (maks 30)
+   - ≥3 User-Agent berbeda dari kunci sama (cluster): +10
+   - ≥10 sinyal dalam 10 menit dengan skor rata-rata kotor: +10
+
+   **Gerbang anti false-positive:** pengguna asli yang rajin tapi bersih
+   tidak pernah naik skor — tanpa bukti suspicious/bot di jendela itu
+   (atau skor dasar kiriman ini ≥20), poin korelasi selalu 0. Korelasi
+   memperkuat bukti, tidak menciptakan vonis dari nol.
+
+Dashboard dan API kini bisa difilter:
+`/dashboard?verdict=likely_bot`, `/api/events?verdict=suspicious`,
+dan `?key=sess:<id>` untuk menelusuri satu sesi.
 
 ## Naik ke produksi (Laravel-mu)
 
