@@ -28,6 +28,19 @@ Tidak ada `npm install` — hanya Node.js standar.
    cara kliknya. Skornya hampir tidak turun — persis pelajaran dari analisis
    yang kamu kirim: delay hanya mengobati rate-limit, bukan lapisannya.
 
+Sudah ada jalan pintas untuk langkah 2 — script simulasi (butuh server lab
+jalan di terminal lain, dan Playwright dari repo induk mg-bot):
+
+```bash
+node simulate-automation.mjs
+```
+
+Script itu menjalankan dua skenario di page baru masing-masing:
+A) klik DOM `element.click()` — cara bot script klasik, dan
+B) klik `page.click()` Playwright — input lewat CDP.
+Bandingkan skor + alasannya di output dan di dashboard; selisih keduanya
+menunjukkan lapisan mana yang menangkap cara klik yang mana.
+
 ## Sinyal yang diperiksa
 
 | Lapisan | Sinyal | Bobot |
